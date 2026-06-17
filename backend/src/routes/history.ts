@@ -16,11 +16,11 @@ export default async function historyRoutes(app: FastifyInstance): Promise<void>
     const offset = Number(request.query.offset ?? "0");
     const safeLimit = Number.isFinite(limit) ? limit : 20;
     const safeOffset = Number.isFinite(offset) ? offset : 0;
-    const records = getHistory(safeLimit, safeOffset);
+    const records = await getHistory(safeLimit, safeOffset);
     return { records, limit: safeLimit, offset: safeOffset };
   });
 
   app.get("/stats", async () => {
-    return getStats();
+    return await getStats();
   });
 }

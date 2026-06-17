@@ -10,8 +10,7 @@ import analyzeRoutes from "./routes/analyze";
 import statusRoutes from "./routes/status";
 import historyRoutes from "./routes/history";
 
-// Importing db initializes the SQLite schema on first run (no manual steps).
-import "./services/db";
+import { closeDb, connectDb } from "./services/db";
 
 const PORT = Number(process.env.PORT) || 3001;
 const FRONTEND_URL = process.env.FRONTEND_URL || "";
@@ -49,12 +48,30 @@ async function main(): Promise<void> {
     credentials: false,
   });
 
+  // Connect to MongoDB. Don't crash the server if it's unreachable — /status
+  // (the cron keep-warm endpoint) must still respond; DB-backed routes will
+  // surface a clear error until MONGODB_URI becomes reachable.
+  try {
+    await connectDb();
+    app.log.info("MongoDB connected");
+  } catch (err) {
+    app.log.error(
+      err,
+      "MongoDB connection failed — set a reachable MONGODB_URI. DB-backed routes will error until then.",
+    );
+  }
+
   // Root health check.
   app.get("/", async () => ({ service: "voxtrade-backend", status: "online" }));
 
   await app.register(statusRoutes);
   await app.register(analyzeRoutes);
   await app.register(historyRoutes);
+
+  // Close the Mongo connection cleanly on shutdown.
+  app.addHook("onClose", async () => {
+    await closeDb();
+  });
 
   try {
     await app.listen({ port: PORT, host: "0.0.0.0" });

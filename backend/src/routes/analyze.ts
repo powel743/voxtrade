@@ -97,7 +97,7 @@ export default async function analyzeRoutes(app: FastifyInstance): Promise<void>
     // 7. Persist the full record.
     let recordId = -1;
     try {
-      recordId = saveAnalysis({
+      recordId = await saveAnalysis({
         timestamp,
         analysis,
         trade_placed: tradePlaced,

@@ -10,13 +10,15 @@ services:
     envVars:
       - key: GEMINI_API_KEY
         sync: false
+      - key: MONGODB_URI
+        sync: false
       - key: MT5_BRIDGE_URL
         sync: false
       - key: FRONTEND_URL
         sync: false
       - key: CONFIDENCE_THRESHOLD
         value: "7"
-      - key: DB_PATH
-        value: "./voxtrade.db"
+      - key: MONGODB_DB
+        value: "voxtrade"
       - key: PORT
         value: "3001"

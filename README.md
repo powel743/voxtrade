@@ -24,8 +24,8 @@ setup is found — automatically places the trade on your Exness MT5 account.
                        │                         │                          │
                        ▼                         ▼                          ▼
               ┌─────────────────┐      ┌────────────────────┐     ┌─────────────────┐
-              │  Gemini API     │      │  ngrok / Cloudflare │     │  SQLite (better │
-              │  2.0 Flash      │      │  Tunnel             │     │  -sqlite3)      │
+              │  Gemini API     │      │  ngrok / Cloudflare │     │  MongoDB        │
+              │  2.0 Flash      │      │  Tunnel             │     │  (Atlas)        │
               │  SMC analysis   │      └─────────┬──────────┘     │  trade history  │
               └─────────────────┘                │                └─────────────────┘
                                                  ▼
@@ -112,6 +112,7 @@ otherwise the result is `NO_TRADE`.
    configures build/start commands).
 3. Set environment variables:
    - `GEMINI_API_KEY` — your Google Gemini API key
+   - `MONGODB_URI` — your MongoDB Atlas connection string (records persist here)
    - `MT5_BRIDGE_URL` — the ngrok / Cloudflare URL from Part A
    - `FRONTEND_URL` — your Vercel app URL (for CORS)
    - `CONFIDENCE_THRESHOLD` — defaults to `7`
@@ -186,7 +187,7 @@ solely responsible for any trades placed on your account.
 ```
 voxtrade/
 ├── frontend/     React + Vite dashboard (deploy to Vercel)
-├── backend/      Fastify API + Gemini + SQLite (deploy to Render)
+├── backend/      Fastify API + Gemini + MongoDB (deploy to Render)
 └── mt5-bridge/   Flask bridge to MetaTrader 5 (runs on Windows)
 ```
 
