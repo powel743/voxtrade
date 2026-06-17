@@ -1,0 +1,26 @@
+{
+  "name": "voxtrade-backend",
+  "version": "1.0.0",
+  "description": "VoxTrade backend — Claude SMC analysis + MT5 trade orchestration",
+  "type": "commonjs",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node src/index.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@fastify/cors": "^9.0.0",
+    "@google/generative-ai": "^0.21.0",
+    "better-sqlite3": "^9.4.0",
+    "dotenv": "^16.4.0",
+    "fastify": "^4.26.0"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.9",
+    "@types/node": "^20.11.0",
+    "ts-node": "^10.9.0",
+    "typescript": "^5.3.0"
+  }
+}

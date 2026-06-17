@@ -1,0 +1,7 @@
+MetaTrader5
+flask
+flask-cors
+pandas
+python-dotenv
+numpy
+waitress

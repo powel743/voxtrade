@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Databases
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+*.sqlite
+
+# Python
+__pycache__/
+*.pyc
+mt5-bridge/__pycache__/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor / OS
+.DS_Store
+.vscode/
+.idea/
+*.swp
+
+# Claude Code local settings (machine-specific)
+.claude/settings.local.json
