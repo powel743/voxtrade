@@ -1,12 +1,12 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// Gemini analysis service — sends SMC prompt, parses + validates the JSON result
+// Groq analysis service — sends SMC prompt, parses + validates the JSON result
 // ─────────────────────────────────────────────────────────────────────────────
 
-import { GoogleGenerativeAI, type GenerativeModel } from "@google/generative-ai";
+import Groq from "groq-sdk";
 import { buildSMCPrompt } from "../prompts/smc";
 import type { AnalysisResult, Candle, Confluence, Reasoning, Signal } from "../types";
 
-const MODEL = "gemini-2.0-flash";
+const MODEL = "llama-3.3-70b-versatile";
 const MAX_TOKENS = 2048;
 const TEMPERATURE = 0;
 
@@ -19,24 +19,16 @@ export class ClaudeParseError extends Error {
   }
 }
 
-let model: GenerativeModel | null = null;
+let client: Groq | null = null;
 
-function getClient(): GenerativeModel {
-  if (model) return model;
-  const apiKey = process.env.GEMINI_API_KEY;
+function getClient(): Groq {
+  if (client) return client;
+  const apiKey = process.env.GROQ_API_KEY;
   if (!apiKey) {
-    throw new Error("GEMINI_API_KEY is not set on the backend.");
+    throw new Error("GROQ_API_KEY is not set on the backend.");
   }
-  const genAI = new GoogleGenerativeAI(apiKey);
-  model = genAI.getGenerativeModel({
-    model: MODEL,
-    generationConfig: {
-      temperature: TEMPERATURE,
-      maxOutputTokens: MAX_TOKENS,
-      responseMimeType: "application/json",
-    },
-  });
-  return model;
+  client = new Groq({ apiKey });
+  return client;
 }
 
 /** Remove accidental markdown fences and isolate the JSON object. */
@@ -156,20 +148,26 @@ function validateAndNormalize(parsed: unknown, raw: string): AnalysisResult {
   };
 }
 
-/** Run the SMC analysis through Gemini and return a validated result. */
+/** Run the SMC analysis through Groq and return a validated result. */
 export async function analyzeMarket(
   h1: Candle[],
   m15: Candle[],
   m5: Candle[],
 ): Promise<AnalysisResult> {
   const prompt = buildSMCPrompt(h1, m15, m5);
-  const gemini = getClient();
+  const groq = getClient();
 
-  const result = await gemini.generateContent(prompt);
+  const completion = await groq.chat.completions.create({
+    model: MODEL,
+    temperature: TEMPERATURE,
+    max_tokens: MAX_TOKENS,
+    response_format: { type: "json_object" },
+    messages: [{ role: "user", content: prompt }],
+  });
 
-  const raw = result.response.text();
+  const raw = completion.choices[0]?.message?.content;
   if (!raw) {
-    throw new ClaudeParseError("Gemini returned no text content", JSON.stringify(result.response));
+    throw new ClaudeParseError("Groq returned no text content", JSON.stringify(completion));
   }
 
   const jsonStr = extractJson(raw);
@@ -178,7 +176,7 @@ export async function analyzeMarket(
   try {
     parsed = JSON.parse(jsonStr);
   } catch {
-    throw new ClaudeParseError("Failed to JSON.parse Gemini response", raw);
+    throw new ClaudeParseError("Failed to JSON.parse Groq response", raw);
   }
 
   return validateAndNormalize(parsed, raw);
