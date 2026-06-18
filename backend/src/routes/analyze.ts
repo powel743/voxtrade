@@ -6,9 +6,8 @@ import type { FastifyInstance } from "fastify";
 import { analyzeMarket, ClaudeParseError } from "../services/claude";
 import { BridgeOfflineError, getCandles, placeTrade } from "../services/mt5";
 import { saveAnalysis } from "../services/db";
+import { SYMBOL } from "../config";
 import type { AnalyzeResponse, TradeResult } from "../types";
-
-const SYMBOL = "XAUUSD";
 
 function confidenceThreshold(): number {
   const raw = Number(process.env.CONFIDENCE_THRESHOLD);
@@ -42,7 +41,7 @@ export default async function analyzeRoutes(app: FastifyInstance): Promise<void>
       reply.code(503);
       return {
         error:
-          "MT5 bridge returned no candle data. Ensure XAUUSD is available in Market Watch on your terminal.",
+          `MT5 bridge returned no candle data. Ensure ${SYMBOL} is available in Market Watch on your terminal.`,
       };
     }
 

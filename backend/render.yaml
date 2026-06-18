@@ -18,6 +18,8 @@ services:
         sync: false
       - key: CONFIDENCE_THRESHOLD
         value: "7"
+      - key: SYMBOL
+        value: "XAUUSDm"
       - key: MONGODB_DB
         value: "voxtrade"
       - key: PORT

@@ -2,6 +2,7 @@
 // MT5 bridge client — talks to bridge.py through the ngrok/Cloudflare tunnel
 // ─────────────────────────────────────────────────────────────────────────────
 
+import { SYMBOL } from "../config";
 import type {
   BridgeStatus,
   Candle,
@@ -105,7 +106,7 @@ export async function placeTrade(req: TradeRequest, timeoutMs = 20000): Promise<
 }
 
 export async function getOpenPositions(
-  symbol = "XAUUSD",
+  symbol = SYMBOL,
   timeoutMs = 10000,
 ): Promise<OpenPosition[]> {
   ensureBridgeConfigured();
