@@ -21,8 +21,19 @@ export class BridgeOfflineError extends Error {
   }
 }
 
+/** Thrown specifically when a bridge request exceeds its timeout (aborted). */
+export class BridgeTimeoutError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "BridgeTimeoutError";
+  }
+}
+
 const OFFLINE_HINT =
   "MT5 bridge offline. Make sure bridge.py is running on your Windows PC and ngrok/Cloudflare tunnel is active.";
+
+const TIMEOUT_HINT =
+  "MT5 bridge timed out. Your Windows PC or the ngrok/Cloudflare tunnel is slow or unreachable — please try again in a moment.";
 
 async function fetchWithTimeout(
   url: string,
@@ -36,6 +47,18 @@ async function fetchWithTimeout(
   } finally {
     clearTimeout(timer);
   }
+}
+
+/** Map a low-level fetch error to the right typed bridge error (timeout vs offline). */
+function mapFetchError(err: unknown): never {
+  if (err instanceof BridgeOfflineError || err instanceof BridgeTimeoutError) throw err;
+  // AbortController fires an AbortError (Node may surface it as a TimeoutError/DOMException).
+  const name =
+    typeof err === "object" && err !== null && "name" in err ? String((err as { name: unknown }).name) : "";
+  if (name === "AbortError" || name === "TimeoutError") {
+    throw new BridgeTimeoutError(TIMEOUT_HINT);
+  }
+  throw new BridgeOfflineError(OFFLINE_HINT);
 }
 
 function ensureBridgeConfigured(): void {
@@ -56,8 +79,7 @@ export async function getStatus(timeoutMs = 5000): Promise<BridgeStatus> {
     }
     return (await res.json()) as BridgeStatus;
   } catch (err) {
-    if (err instanceof BridgeOfflineError) throw err;
-    throw new BridgeOfflineError(OFFLINE_HINT);
+    mapFetchError(err);
   }
 }
 
@@ -77,8 +99,7 @@ export async function getCandles(
     }
     return (await res.json()) as Candle[];
   } catch (err) {
-    if (err instanceof BridgeOfflineError) throw err;
-    throw new BridgeOfflineError(OFFLINE_HINT);
+    mapFetchError(err);
   }
 }
 
@@ -100,8 +121,7 @@ export async function placeTrade(req: TradeRequest, timeoutMs = 20000): Promise<
     }
     return data;
   } catch (err) {
-    if (err instanceof BridgeOfflineError) throw err;
-    throw new BridgeOfflineError(OFFLINE_HINT);
+    mapFetchError(err);
   }
 }
 
@@ -118,8 +138,7 @@ export async function getOpenPositions(
     }
     return (await res.json()) as OpenPosition[];
   } catch (err) {
-    if (err instanceof BridgeOfflineError) throw err;
-    throw new BridgeOfflineError(OFFLINE_HINT);
+    mapFetchError(err);
   }
 }
 
@@ -146,7 +165,6 @@ export async function closePosition(
     }
     return data;
   } catch (err) {
-    if (err instanceof BridgeOfflineError) throw err;
-    throw new BridgeOfflineError(OFFLINE_HINT);
+    mapFetchError(err);
   }
 }

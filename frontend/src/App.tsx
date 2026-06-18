@@ -97,7 +97,7 @@ export default function App(): JSX.Element {
         </section>
 
         <footer className="mt-10 border-t border-card-border pt-5 text-center text-xs text-text-secondary">
-          VoxTrade · Gemini-powered SMC + Price Action · Test on a demo account first.
+          VoxTrade · Groq-powered SMC + Price Action · Test on a demo account first.
         </footer>
       </div>
     </div>

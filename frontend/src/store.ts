@@ -9,7 +9,7 @@ export const LOADING_MESSAGES: string[] = [
   "Fetching H1 candles...",
   "Fetching M15 candles...",
   "Fetching M5 candles...",
-  "Gemini is analyzing market structure...",
+  "AI is analyzing market structure...",
   "Checking liquidity pools...",
   "Identifying order blocks and FVGs...",
   "Calculating confluence score...",

@@ -76,7 +76,7 @@ export function AnalyzeButton(): JSX.Element {
         <span className="tabular-nums">{label}</span>
       </button>
       <p className="text-center text-xs text-text-secondary">
-        Powered by Gemini AI · SMC + Price Action · H1 → M15 → M5
+        Powered by Groq AI · SMC + Price Action · H1 → M15 → M5
       </p>
     </div>
   );

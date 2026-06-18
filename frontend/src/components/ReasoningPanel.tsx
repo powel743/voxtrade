@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// ReasoningPanel — expandable accordion of Gemini's reasoning, closed by default
+// ReasoningPanel — expandable accordion of the AI's reasoning, closed by default
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { useState } from "react";
