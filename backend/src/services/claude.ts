@@ -6,7 +6,7 @@ import Groq from "groq-sdk";
 import { buildSMCPrompt } from "../prompts/smc";
 import type { AnalysisResult, Candle, Confluence, Reasoning, Signal } from "../types";
 
-const MODEL = "llama-3.1-70b-versatile";
+const MODEL = "llama-3.3-70b-versatile";
 const MAX_TOKENS = 2048;
 const TEMPERATURE = 0;
 
